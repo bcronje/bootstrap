@@ -28,7 +28,10 @@ angular.module('ui.bootstrap.dropdown', [])
     }
   };
 
-  var closeDropdown = function() {
+  var closeDropdown = function( evt ) {
+    if ( evt.target === openScope.getToggleElement() ) {
+      return;
+    }
     openScope.$apply(function() {
       openScope.isOpen = false;
     });
@@ -37,7 +40,7 @@ angular.module('ui.bootstrap.dropdown', [])
   var escapeKeyBind = function( evt ) {
     if ( evt.which === 27 ) {
       openScope.focusToggleElement();
-      closeDropdown();
+      closeDropdown(evt);
     }
   };
 }])
@@ -70,6 +73,13 @@ angular.module('ui.bootstrap.dropdown', [])
   // Allow other directives to watch status
   this.isOpen = function() {
     return scope.isOpen;
+  };
+
+  scope.getToggleElement = function() {
+    if ( self.toggleElement ) {
+      return self.toggleElement[0];
+    }
+    return undefined;
   };
 
   scope.focusToggleElement = function() {
@@ -124,7 +134,6 @@ angular.module('ui.bootstrap.dropdown', [])
 
       var toggleDropdown = function(event) {
         event.preventDefault();
-        event.stopPropagation();
 
         if ( !element.hasClass('disabled') && !attrs.disabled ) {
           scope.$apply(function() {
